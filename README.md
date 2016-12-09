@@ -56,7 +56,7 @@ to the require section of your `composer.json` file.
 
 ## Usage
 
-First you need to define your config: it may be a PHP array right in the file you plan to include it in but it's better to place it in a file which can be in any [supported format](#supported-config-formats). Just like it's done in the [example](#example).
+First you need to define your config: it may be a PHP array right in the file you plan to include it in but it's better to place it in a file which can be in any [supported format](#supported-config-formats). Just like it's done in the [example](#example-config).
 
 Then your entry scripts have to be modified to load the config. It's how it can look like for a `console` tier [`yii` file](docs/examples/basic/yii) (consider a *tier* as a *type*) in a Yii 2 [basic project template](https://github.com/yiisoft/yii2-app-basic):
 
@@ -426,7 +426,7 @@ Array of:
 - array configurations of [`Loader` objects](#loader-object)
 - [shortcuts](#shortcuts)
 
-See an [example](#example-config).
+See the [example](#example-config).
 
 **Required**: yes
 
