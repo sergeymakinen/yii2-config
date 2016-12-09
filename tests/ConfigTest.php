@@ -214,6 +214,16 @@ class ConfigTest extends TestCase
         $loader->load();
     }
 
+    /**
+     * @expectedException \yii\base\InvalidConfigException
+     */
+    public function testWrongFilesEntry()
+    {
+        $loader = $this->createConfig();
+        $loader->files[] = new \stdClass();
+        $loader->load();
+    }
+
     public function testCache()
     {
         $expected = '$_ENV[\'init1\'] = true;
