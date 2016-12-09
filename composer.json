@@ -1,0 +1,40 @@
+{
+    "name": "sergeymakinen/yii2-config",
+    "homepage": "https://github.com/sergeymakinen/yii2-config",
+    "description": "Versatile config loader for Yii 2",
+    "keywords": ["yii2-config", "yii2", "yii", "config", "configuration", "loader"],
+    "type": "yii2-extension",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/sergeymakinen/yii2-config/issues",
+        "source": "https://github.com/sergeymakinen/yii2-config"
+    },
+    "authors": [
+        {
+            "name": "Sergey Makinen",
+            "email": "sergey@makinen.ru",
+            "homepage": "https://makinen.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "yiisoft/yii2": "~2.0.1"
+    },
+    "require-dev": {
+        "sergeymakinen/yii2-tests": "^1.0",
+        "symfony/yaml": "^2.8 || ^3.2"
+    },
+    "suggest": {
+        "symfony/yaml": "Required to load YAML config files (^2.8 || ^3.2)."
+    },
+    "autoload": {
+        "psr-4": {
+            "sergeymakinen\\config\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "sergeymakinen\\tests\\config\\": "tests"
+        }
+    }
+}
