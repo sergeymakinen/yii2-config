@@ -3,6 +3,7 @@
 namespace sergeymakinen\tests\config;
 
 use sergeymakinen\config\PhpBootstrapLoader;
+use yii\helpers\StringHelper;
 
 class PhpBootstrapLoaderTest extends TestCase
 {
@@ -12,30 +13,15 @@ class PhpBootstrapLoaderTest extends TestCase
         $loader->flushCache();
         $loader->cache();
         $this->assertEquals([
-            mb_substr(file_get_contents(\Yii::getAlias('@tests/config/init1.php')), 5, null, 'UTF-8'),
-            mb_substr(file_get_contents(\Yii::getAlias('@tests/config/init2.php')), 5, null, 'UTF-8'),
-        ], $this->getInaccessibleProperty($loader, 'storage')->bootstrap);
-
-        $loader = $this->createConfig([
-            'files' => [
-                [
-                    'class' => PhpBootstrapLoader::className(),
-                    'path' => 'short.php',
-                ],
-            ],
-        ]);
-        $loader->cache();
-        $this->assertEquals([
-            mb_substr(file_get_contents(\Yii::getAlias('@tests/config/init1.php')), 5, null, 'UTF-8'),
-            mb_substr(file_get_contents(\Yii::getAlias('@tests/config/init2.php')), 5, null, 'UTF-8'),
-            mb_substr(file_get_contents(\Yii::getAlias('@tests/config/short.php')), 2, null, 'UTF-8'),
+            $this->loadPhpCode('@tests/config/init1.php', 5),
+            $this->loadPhpCode('@tests/config/init2.php', 5),
         ], $this->getInaccessibleProperty($loader, 'storage')->bootstrap);
     }
 
     /**
      * @expectedException \yii\base\InvalidValueException
      */
-    public function testCompileError()
+    public function testPlainFileCompileError()
     {
         $loader = $this->createConfig([
             'files' => [
@@ -46,5 +32,42 @@ class PhpBootstrapLoaderTest extends TestCase
             ],
         ]);
         $loader->cache();
+    }
+
+    /**
+     * @expectedException \yii\base\InvalidValueException
+     */
+    public function testEchoTagCompileError()
+    {
+        $loader = $this->createConfig([
+            'files' => [
+                [
+                    'class' => PhpBootstrapLoader::className(),
+                    'path' => 'echo.php',
+                ],
+            ],
+        ]);
+        $loader->cache();
+    }
+
+    /**
+     * @expectedException \yii\base\InvalidValueException
+     */
+    public function testMixedPhpHtmlCompileError()
+    {
+        $loader = $this->createConfig([
+            'files' => [
+                [
+                    'class' => PhpBootstrapLoader::className(),
+                    'path' => 'php-html.php',
+                ],
+            ],
+        ]);
+        $loader->cache();
+    }
+
+    protected function loadPhpCode($path, $index)
+    {
+        return trim(StringHelper::byteSubstr(file_get_contents(\Yii::getAlias($path)), $index));
     }
 }

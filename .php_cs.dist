@@ -82,7 +82,6 @@ return Config::create()
                 __DIR__ . '/src',
                 __DIR__ . '/tests',
             ])
-            ->notPath('config/short.php')
     )
     ->setRiskyAllowed(true)
     ->setRules($rules)
