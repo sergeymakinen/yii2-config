@@ -82,6 +82,7 @@ return Config::create()
                 __DIR__ . '/src',
                 __DIR__ . '/tests',
             ])
+            ->notPath('config/closing-tag.php')
     )
     ->setRiskyAllowed(true)
     ->setRules($rules)

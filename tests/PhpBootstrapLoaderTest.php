@@ -16,6 +16,21 @@ class PhpBootstrapLoaderTest extends TestCase
             $this->loadPhpCode('@tests/config/init1.php', 5),
             $this->loadPhpCode('@tests/config/init2.php', 5),
         ], $this->getInaccessibleProperty($loader, 'storage')->bootstrap);
+
+        $loader = $this->createConfig([
+            'files' => [
+                [
+                    'class' => PhpBootstrapLoader::className(),
+                    'path' => 'closing-tag.php',
+                ],
+            ],
+        ]);
+        $loader->cache();
+        $this->assertEquals([
+            $this->loadPhpCode('@tests/config/init1.php', 5),
+            $this->loadPhpCode('@tests/config/init2.php', 5),
+            $this->loadPhpCode('@tests/config/closing-tag.php', 5, -2),
+        ], $this->getInaccessibleProperty($loader, 'storage')->bootstrap);
     }
 
     /**
@@ -66,8 +81,8 @@ class PhpBootstrapLoaderTest extends TestCase
         $loader->cache();
     }
 
-    protected function loadPhpCode($path, $index)
+    protected function loadPhpCode($path, $index, $length = null)
     {
-        return trim(StringHelper::byteSubstr(file_get_contents(\Yii::getAlias($path)), $index));
+        return trim(StringHelper::byteSubstr(file_get_contents(\Yii::getAlias($path)), $index, $length));
     }
 }

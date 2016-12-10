@@ -69,6 +69,9 @@ class PhpBootstrapLoader extends Loader
             }
         }
 
+        if ($this->isDesiredToken($tokens[$tokenCount - 1], T_CLOSE_TAG)) {
+            $contents = StringHelper::byteSubstr($contents, 0, -1 * StringHelper::byteLength($tokens[$tokenCount - 1][1]));
+        }
         return trim(StringHelper::byteSubstr($contents, StringHelper::byteLength($tokens[0][1])));
     }
 
