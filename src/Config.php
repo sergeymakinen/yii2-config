@@ -244,7 +244,7 @@ class Config extends Object
      */
     protected function loadCached()
     {
-        $token = "Loading config '{$this->tier}' from cache";
+        $token = "Loading config from cache: {$this->tier}";
         \Yii::beginProfile($token, __METHOD__);
         $this->storage->reset();
         /** @noinspection PhpIncludeInspection */
@@ -260,7 +260,7 @@ class Config extends Object
      */
     protected function loadFresh()
     {
-        $token = "Loading config '{$this->tier}'";
+        $token = "Loading config: {$this->tier}";
         \Yii::beginProfile($token, __METHOD__);
         $this->storage->reset();
         foreach ($this->resolveLoaders() as $file) {
@@ -346,7 +346,7 @@ class Config extends Object
      */
     protected function compile()
     {
-        $token = "Compiling config '{$this->tier}'";
+        $token = "Compiling config: {$this->tier}";
         \Yii::beginProfile($token, __METHOD__);
         $this->storage->reset();
         foreach ($this->resolveLoaders() as $file) {

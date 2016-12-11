@@ -110,12 +110,11 @@ abstract class Loader extends Object
                 '{env}' => $this->config->env,
             ]);
             if (!is_file($filePath)) {
-                \Yii::trace("Skipped the non-existent '{$filePath}' config file.", __METHOD__);
                 continue;
             }
 
             $files[] = $filePath;
-            \Yii::trace("Loaded the '{$filePath}' config file.", __METHOD__);
+            \Yii::trace("Loaded config file: '{$filePath}'", __METHOD__);
             $nonLocalFileCount++;
             if (!$this->enableLocal) {
                 continue;
@@ -124,9 +123,7 @@ abstract class Loader extends Object
             $filePath = $this->makeLocalPath($filePath);
             if (is_file($filePath)) {
                 $files[] = $filePath;
-                \Yii::trace("Loaded the '{$filePath}' config file.", __METHOD__);
-            } else {
-                \Yii::trace("Skipped the non-existent '{$filePath}' config file.", __METHOD__);
+                \Yii::trace("Loaded config file: '{$filePath}'", __METHOD__);
             }
         }
         if ($this->required && $nonLocalFileCount === 0) {
