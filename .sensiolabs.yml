@@ -1,7 +1,9 @@
 rules:
-    php.bad_mutator_method_name_for_boolean_property:
-        enabled: false
+  php.bad_mutator_method_name_for_boolean_property:
+    enabled: false
+  php.use_php_eval_function:
+    enabled: false
 exclude_patterns:
-    - docs/*
-    - tests/*
-    - vendor/*
+  - docs/*
+  - tests/*
+  - vendor/*
