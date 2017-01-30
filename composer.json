@@ -23,7 +23,6 @@
     },
     "require-dev": {
         "sergeymakinen/yii2-tests": "^2.0",
-        "phpunit/phpunit": "^4.8.34",
         "symfony/yaml": "^2.8 || ^3.2"
     },
     "suggest": {
