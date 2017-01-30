@@ -354,7 +354,7 @@ class XmlLoader extends sergeymakinen\yii\config\ArrayLoader
 }
 ```
 
-If you wish to use the loader automatically for XML files then add the following entry to the `$resolvers` array of `Config`:
+If you wish to use the loader automatically for XML files then add the following entry to the `loaders` property array of `Config`:
 
 ```php
 'xml' => 'XmlLoader'
