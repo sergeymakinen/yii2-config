@@ -18,10 +18,11 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "yiisoft/yii2": "~2.0.1"
+        "yiisoft/yii2": "~2.0.2",
+        "sergeymakinen/yii2-php-file-cache": "^2.0"
     },
     "require-dev": {
-        "sergeymakinen/yii2-tests": "^1.0",
+        "sergeymakinen/yii2-tests": "^2.0",
         "symfony/yaml": "^2.8 || ^3.2"
     },
     "suggest": {
@@ -29,12 +30,12 @@
     },
     "autoload": {
         "psr-4": {
-            "sergeymakinen\\config\\": "src"
+            "sergeymakinen\\yii\\config\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "sergeymakinen\\tests\\config\\": "tests"
+            "sergeymakinen\\yii\\config\\tests\\": "tests"
         }
     }
 }

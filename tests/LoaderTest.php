@@ -1,10 +1,10 @@
 <?php
 
-namespace sergeymakinen\tests\config;
+namespace sergeymakinen\yii\config\tests;
 
 /**
- * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
+ * @runTestsInSeparateProcesses
  */
 class LoaderTest extends TestCase
 {
@@ -58,6 +58,7 @@ class LoaderTest extends TestCase
 
     /**
      * @dataProvider substitutionsProvider
+     *
      * @param array $config
      */
     public function testSubstitutions(array $config)
@@ -162,7 +163,7 @@ class LoaderTest extends TestCase
     }
 
     /**
-     * @expectedException \sergeymakinen\config\ConfigNotFoundException
+     * @expectedException \sergeymakinen\yii\config\ConfigNotFoundException
      */
     public function testRequiredPathNotFoundProperty()
     {
@@ -201,7 +202,7 @@ class LoaderTest extends TestCase
     }
 
     /**
-     * @expectedException \sergeymakinen\config\ConfigNotFoundException
+     * @expectedException \sergeymakinen\yii\config\ConfigNotFoundException
      */
     public function testNoRequiredMainButLocalFile()
     {

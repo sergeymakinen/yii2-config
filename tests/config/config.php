@@ -2,7 +2,10 @@
 
 return [
     'configDir' => __DIR__,
-    'cacheDir' => __DIR__ . '/../runtime/config',
+    'cache' => [
+        'class' => \sergeymakinen\yii\phpfilecache\Cache::className(),
+        'cachePath' => '@tests/runtime/cache',
+    ],
     'tier' => 'console-test',
     'env' => 'barenv',
     'dirs' => [
@@ -20,11 +23,11 @@ return [
             'path' => 'barenv/bar.php',
         ],
         'init1' => [
-            'class' => sergeymakinen\config\PhpBootstrapLoader::className(),
+            'class' => sergeymakinen\yii\config\PhpBootstrapLoader::className(),
             'path' => 'init1.php',
         ],
         'init2' => [
-            'class' => sergeymakinen\tests\config\mocks\TestPhpBootstrapLoader::className(),
+            'class' => \sergeymakinen\yii\config\tests\helpers\TestPhpBootstrapLoader::className(),
             'path' => 'init2.php',
         ],
     ],

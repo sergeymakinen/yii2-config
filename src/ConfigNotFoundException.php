@@ -1,13 +1,13 @@
 <?php
 /**
- * Yii 2 config loader.
+ * Yii 2 config loader
  *
  * @see       https://github.com/sergeymakinen/yii2-config
  * @copyright Copyright (c) 2016 Sergey Makinen (https://makinen.ru)
  * @license   https://github.com/sergeymakinen/yii2-config/blob/master/LICENSE The MIT License
  */
 
-namespace sergeymakinen\config;
+namespace sergeymakinen\yii\config;
 
 use yii\base\Exception;
 
@@ -17,10 +17,10 @@ use yii\base\Exception;
 class ConfigNotFoundException extends Exception
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getName()
     {
-        return 'Config File not Found';
+        return 'Config File Not Found';
     }
 }

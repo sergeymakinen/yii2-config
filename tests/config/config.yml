@@ -1,3 +1,6 @@
+cache:
+    class: sergeymakinen\yii\phpfilecache\Cache
+    cachePath: '@tests/runtime/cache'
 tier: console-test
 env: barenv
 dirs:
@@ -12,8 +15,8 @@ files:
         env: '!barenv'
         path: barenv/bar.php
     init1:
-        class: sergeymakinen\config\PhpBootstrapLoader
+        class: sergeymakinen\yii\config\PhpBootstrapLoader
         path: init1.php
     init2:
-        class: sergeymakinen\tests\config\mocks\TestPhpBootstrapLoader
+        class: sergeymakinen\yii\config\tests\helpers\TestPhpBootstrapLoader
         path: init2.php

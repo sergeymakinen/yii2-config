@@ -1,15 +1,14 @@
 <?php
 /**
- * Yii 2 config loader.
+ * Yii 2 config loader
  *
  * @see       https://github.com/sergeymakinen/yii2-config
- * @copyright Copyright (c) 2016 Sergey Makinen (https://makinen.ru)
+ * @copyright Copyright (c) 2016-2017 Sergey Makinen (https://makinen.ru)
  * @license   https://github.com/sergeymakinen/yii2-config/blob/master/LICENSE The MIT License
  */
 
-namespace sergeymakinen\config;
+namespace sergeymakinen\yii\config;
 
-use yii\base\InvalidConfigException;
 use yii\base\Object;
 
 /**
@@ -18,60 +17,72 @@ use yii\base\Object;
 abstract class Loader extends Object
 {
     /**
-     * A tier name or a list of tier types is compatible to be able to load this file.
+     * @var string|string[]|null a tier name or an array of tier names to match a tier name specified in [[Config]].
      *
-     * @var string|string[]|null
+     * If there're an array it will match *any of* specified values.
+     * You can also use an exclamation mark (`!`) before a name to use a `not` match. Example:
+     *
+     * ```php
+     * [
+     *     'tier1',
+     *     '!tier2',
+     * ]
+     * ```
+     *
+     * It matches if the tier name is `tier1` *or* **not** `tier2`.
      */
     public $tier;
 
     /**
-     * An environment name or a list of environment names is compatible to be able to load this file.
+     * @var string|string[]|null an environment name or an array of environment names to match an environment name specified in [[Config]].
      *
-     * @var string|string[]|null
+     * If there're an array it will match *any of* specified values.
+     * You can also use an exclamation mark (`!`) before a name to use a `not` match. Example:
+     *
+     * ```php
+     * [
+     *     'env1',
+     *     '!env2',
+     * ]
+     * ```
+     *
+     * It matches if the environment name is `env1` *or* **not** `env2`.
      */
     public $env;
 
     /**
-     * The file path.
-     *
-     * @var string
+     * @var string full path to a directory where [[Config]] will store its cached configs.
      */
     public $path;
 
     /**
-     * Whether the file is required.
-     *
-     * @var bool
+     * @var bool whether the file is required.
      */
     public $required = true;
 
     /**
-     * Whether to try load a "-local" local file as well as a main file.
+     * @var bool whether to look for a local config in addition to a main one.
      *
-     * @var bool
+     * For example, if [[$enableLocal]] is `true` and a main config file name is `NAME.EXT`,
+     * [[Config]] will also look for the `NAME-local.EXT` file.
      */
     public $enableLocal = true;
 
     /**
-     * Config instance.
-     *
-     * @var Config
+     * @var Config [[Config]] instance.
      */
     protected $config;
 
     /**
-     * Internal config object instance.
-     *
-     * @var Storage
+     * @var Storage internal config object instance.
      */
     protected $storage;
 
     /**
      * Creates a new Loader object.
-     *
-     * @param Config $configObject
-     * @param Storage $storage
-     * @param array $config
+     * @param Config $configObject current [[Config]] instance.
+     * @param Storage $storage internal config object instance.
+     * @param array $config name-value pairs that will be used to initialize the object properties.
      */
     public function __construct(Config $configObject, Storage $storage, $config = [])
     {
@@ -92,9 +103,8 @@ abstract class Loader extends Object
 
     /**
      * Resolves the current configuration into config file pathes.
-     *
-     * @throws InvalidConfigException
-     * @return string[]
+     * @return string[] config file pathes.
+     * @throws ConfigNotFoundException
      */
     public function resolveFiles()
     {
@@ -135,10 +145,8 @@ abstract class Loader extends Object
 
     /**
      * Returns a file path with a "-local" suffix.
-     *
-     * @param string $path
-     *
-     * @return string
+     * @param string $path the file path.
+     * @return string file path with a "-local" suffix.
      */
     protected function makeLocalPath($path)
     {
@@ -155,8 +163,7 @@ abstract class Loader extends Object
 
     /**
      * Returns whether the configuration allows to load this config.
-     *
-     * @return bool
+     * @return bool whether the configuration allows to load this config.
      */
     protected function isAllowed()
     {
@@ -173,20 +180,18 @@ abstract class Loader extends Object
 
     /**
      * Returns whether the value is in the list of allowed values.
-     *
-     * @param mixed $value
-     * @param mixed $allowedValues
-     *
-     * @return bool
+     * @param mixed $value the value to be tested.
+     * @param mixed $allowedValues the list of allowed values.
+     * @return bool whether the value is in the list of allowed values.
      */
     protected function isValueAllowed($value, $allowedValues)
     {
-        if (!isset($allowedValues)) {
+        if ($allowedValues === null) {
             return true;
         }
 
         foreach ((array) $allowedValues as $allowedValue) {
-            if (substr($allowedValue, 0, 1) === '!') {
+            if (strpos($allowedValue, '!') === 0) {
                 if (substr($allowedValue, 1) !== $value) {
                     return true;
                 }

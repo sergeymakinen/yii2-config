@@ -1,8 +1,8 @@
 <?php
 
-namespace sergeymakinen\tests\config\mocks;
+namespace sergeymakinen\yii\config\tests\helpers;
 
-use sergeymakinen\config\PhpBootstrapLoader;
+use sergeymakinen\yii\config\PhpBootstrapLoader;
 
 class TestPhpBootstrapLoader extends PhpBootstrapLoader
 {

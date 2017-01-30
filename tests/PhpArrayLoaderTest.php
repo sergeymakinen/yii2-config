@@ -1,15 +1,15 @@
 <?php
 
-namespace sergeymakinen\tests\config;
-
-use yii\helpers\FileHelper;
+namespace sergeymakinen\yii\config\tests;
 
 class PhpArrayLoaderTest extends TestCase
 {
     public function testCompile()
     {
-        $loader = $this->createConfig();
-        FileHelper::removeDirectory($loader->cacheDir);
+        $loader = $this->createConfig([
+            'enableCache' => true,
+        ]);
+        $loader->flushCache();
         $loader->cache();
         $this->assertEquals([
             'foo' => 'bar',
@@ -59,6 +59,7 @@ class PhpArrayLoaderTest extends TestCase
 
     /**
      * @dataProvider keyPropertyProvider
+     *
      * @param array $config
      * @param array $expected
      */

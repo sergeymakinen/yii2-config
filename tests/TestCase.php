@@ -1,16 +1,15 @@
 <?php
 
-namespace sergeymakinen\tests\config;
+namespace sergeymakinen\yii\config\tests;
 
-use sergeymakinen\config\Config;
+use sergeymakinen\yii\config\Config;
 use yii\helpers\ArrayHelper;
 
-abstract class TestCase extends \sergeymakinen\tests\TestCase
+abstract class TestCase extends \sergeymakinen\yii\tests\TestCase
 {
     protected function createConfig(array $config = [])
     {
-        $config = ArrayHelper::merge($this->getDefaultConfig(), $config);
-        return new Config($config['configDir'], $config);
+        return new Config(ArrayHelper::merge($this->getDefaultConfig(), $config));
     }
 
     protected function getDefaultConfig()

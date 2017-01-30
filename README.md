@@ -18,22 +18,6 @@ Versatile config loader for Yii 2. You can define a single config definition fil
   * [PHP array](#php-array)
   * [PHP bootstrap](#php-bootstrap)
   * [YAML](#yaml)
-- [Short API documentation](#short-api-documentation)
-  * [Config object](#config-object)
-    + [$cacheDir](#cachedir)
-    + [$cacheFileName](#cachefilename)
-    + [$configDir](#configdir)
-    + [$dirs](#dirs)
-    + [$enableCaching](#enablecaching)
-    + [$env](#env)
-    + [$files](#files)
-    + [$tier](#tier)
-  * [Loader object](#loader-object)
-    + [$enableLocal](#enablelocal)
-    + [$env](#env-1)
-    + [$path](#path)
-    + [$required](#required)
-    + [$tier](#tier-1)
 - [Extending](#extending)
 
 ## Installation
@@ -43,13 +27,13 @@ The preferred way to install this extension is through [composer](https://getcom
 Either run
 
 ```bash
-composer require "sergeymakinen/yii2-config:^1.0"
+composer require "sergeymakinen/yii2-config:^2.0"
 ```
 
 or add
 
 ```json
-"sergeymakinen/yii2-config": "^1.0"
+"sergeymakinen/yii2-config": "^2.0"
 ```
 
 to the require section of your `composer.json` file.
@@ -69,7 +53,7 @@ defined('YII_ENV') or define('YII_ENV', 'dev');
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/vendor/yiisoft/yii2/Yii.php';
 
-$config = sergeymakinen\config\Config::fromFile(__DIR__ . '/config/config.php', ['tier' => 'console']);
+$config = sergeymakinen\yii\config\Config::fromFile(__DIR__ . '/config/config.php', ['tier' => 'console']);
 
 $application = new yii\console\Application($config);
 $exitCode = $application->run();
@@ -86,7 +70,7 @@ defined('YII_ENV') or define('YII_ENV', 'dev');
 require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../../vendor/yiisoft/yii2/Yii.php';
 
-$config = sergeymakinen\config\Config::fromFile(__DIR__ . '/../../common/config/config.php', ['tier' => 'backend']);
+$config = sergeymakinen\yii\config\Config::fromFile(__DIR__ . '/../../common/config/config.php', ['tier' => 'backend']);
 
 (new yii\web\Application($config))->run();
 ```
@@ -108,7 +92,7 @@ return [
     ],
     'files' => [
         [
-            'class' => 'sergeymakinen\config\PhpBootstrapLoader',
+            'class' => 'sergeymakinen\yii\config\PhpBootstrapLoader',
             'path' => 'bootstrap.php',
         ],
         'common.php',
@@ -233,7 +217,7 @@ Samples:
 
 **Extension**: `ini`
 
-**Loader class**: `sergeymakinen\config\IniLoader`
+**Loader class**: `sergeymakinen\yii\config\IniLoader`
 
 **Example**:
 
@@ -250,7 +234,7 @@ charset = utf8
 
 **Extension**: `json`
 
-**Loader class**: `sergeymakinen\config\JsonLoader`
+**Loader class**: `sergeymakinen\yii\config\JsonLoader`
 
 **Example**:
 
@@ -268,7 +252,7 @@ charset = utf8
 
 **Extension**: `php`
 
-**Loader class**: `sergeymakinen\config\PhpArrayLoader`
+**Loader class**: `sergeymakinen\yii\config\PhpArrayLoader`
 
 **Example**:
 
@@ -288,7 +272,7 @@ return [
 
 **Extension**: `php`
 
-**Loader class**: `sergeymakinen\config\PhpBootstrapLoader`
+**Loader class**: `sergeymakinen\yii\config\PhpBootstrapLoader`
 
 **Attention**: you need to explicitly set the class name to use this loader:
 
@@ -322,7 +306,7 @@ Yii::$container->set(yii\grid\GridView::class, function ($container, $params, $c
 
 **Extension**: `yml`, `yaml`
 
-**Loader class**: `sergeymakinen\config\YamlLoader`
+**Loader class**: `sergeymakinen\yii\config\YamlLoader`
 
 **Attention**: you need to install the Symfony YAML library:
 
@@ -350,156 +334,6 @@ password: ''
 charset: utf8
 ```
 
-## Short API documentation
-
-### Config object
-
-#### $cacheDir
-
-Full path to a directory where `Config` will store cached configs.
-
-**Required**: only if you use caching
-
-**Default**: none
-
-#### $cacheFileName
-
-Cache file name or a `Closure` which returns the file name. Both variants can use the following substitutions:
-
-| Name | Description
-| --- | ---
-| `{env}` | Config environment name (`$env`)
-| `{hash}` | MD5 hash of the config dir path (`$configDir`)
-| `{tier}` | Config tier name (`$tier`)
-
-**Required**: no
-
-**Default**: `'{tier}-{env}-{hash}.php'`
-
-#### $configDir
-
-Full path to a directory which `Config` will use as a base directory to look for configs.
-
-**Required**: yes
-
-**Default**: none
-
-#### $dirs
-
-Array of pathes relative to `$configDir`. `Config` will look for configs in each directory in the order they are defined. You can use the following substitutions:
-
-| Name | Description
-| --- | ---
-| `{env}` | Config environment name (`$env`)
-| `{tier}` | Config tier name (`$tier`)
-
-
-**Required**: no
-
-**Default**: `['']`
-
-#### $enableCaching
-
-Whether to enable caching.
-
-The complete configuration will be analyzed and converted to a single PHP file which will be cared by a OPcode cacher so it will load almost immediately.
-
-**Attention**: Config loads the cached file until it's removed manually or using `flushCache()`.
-
-**Required**: no
-
-**Default**: `false`
-
-#### $env
-
-Environment name (e. g. `dev`, `test`, `prod`).
-
-**Required**: no
-
-**Default**: `YII_ENV` constant value
-
-#### $files
-
-Array of:
-
-- [`Loader` objects](#loader-object)
-- array configurations of [`Loader` objects](#loader-object)
-- [shortcuts](#shortcuts)
-
-See the [example](#example-config).
-
-**Required**: yes
-
-**Default**: none
-
-#### $tier
-
-Tier name (e. g. `console`, `web`, `backend`, `frontend`).
-
-**Required**: no
-
-**Default**: `'common'`
-
-### Loader object
-
-#### $enableLocal
-
-Whether to look for a local config in addition to a main one. For example, if `$enableLocal` is `true` and a main config file name is `NAME.EXT`, Config will also look for the `NAME-local.EXT` file.
-
-**Required**: no
-
-**Default**: `true`
-
-#### $env
-
-An environment name or an array of environment names to match an environment name specified in `Config`. If there're an array it will match *any of* specified values. You can also use an exclamation mark (`!`) before a name to use a `not` match. Example:
-
-```php
-[
-    'env1',
-    '!env2',
-]
-```
-
-It matches if the environment name is `env1` *or* **not** `env2`.
-
-**Required**: no
-
-**Default**: none
-
-#### $path
-
-Full path to a directory where `Config` will store its cached configs.
-
-**Required**: yes
-
-**Default**: none
-
-#### $required
-
-Full path to a directory where Config will store its cached configs.
-
-**Required**: no
-
-**Default**: `true`
-
-#### $tier
-
-A tier name or an array of tier names to match a tier name specified in `Config`. If there're an array it will match *any of* specified values. You can also use an exclamation mark (`!`) before a name to use a `not` match. Example:
-
-```php
-[
-    'tier1',
-    '!tier2',
-]
-```
-
-It matches if the tier name is `tier1` *or* **not** `tier2`.
-
-**Required**: no
-
-**Default**: none
-
 ## Extending
 
 For example let's try to write a simple XML loader:
@@ -507,7 +341,7 @@ For example let's try to write a simple XML loader:
 ```php
 use yii\helpers\Json;
 
-class XmlLoader extends sergeymakinen\config\ArrayLoader
+class XmlLoader extends sergeymakinen\yii\config\ArrayLoader
 {
     /**
      * {@inheritdoc}

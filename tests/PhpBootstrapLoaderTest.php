@@ -1,23 +1,31 @@
 <?php
 
-namespace sergeymakinen\tests\config;
+namespace sergeymakinen\yii\config\tests;
 
-use sergeymakinen\config\PhpBootstrapLoader;
+use sergeymakinen\yii\config\PhpBootstrapLoader;
 use yii\helpers\StringHelper;
 
 class PhpBootstrapLoaderTest extends TestCase
 {
-    public function testCompileOk()
+    use CacheConfigProviderTrait;
+
+    /**
+     * @dataProvider cacheConfigProvider
+     *
+     * @param array $testConfig
+     */
+    public function testCompileOk(array $testConfig)
     {
-        $loader = $this->createConfig();
-        $loader->flushCache();
-        $loader->cache();
+        $config = $this->createConfig(array_merge(['enableCache' => true], $testConfig));
+        $config->flushCache();
+        $config->cache();
         $this->assertEquals([
             $this->loadPhpCode('@tests/config/init1.php', 5),
             $this->loadPhpCode('@tests/config/init2.php', 5),
-        ], $this->getInaccessibleProperty($loader, 'storage')->bootstrap);
+        ], $this->getInaccessibleProperty($config, 'storage')->bootstrap);
 
-        $loader = $this->createConfig([
+        $config = $this->createConfig([
+            'enableCache' => true,
             'files' => [
                 [
                     'class' => PhpBootstrapLoader::className(),
@@ -25,60 +33,69 @@ class PhpBootstrapLoaderTest extends TestCase
                 ],
             ],
         ]);
-        $loader->cache();
+        $config->cache();
         $this->assertEquals([
             $this->loadPhpCode('@tests/config/init1.php', 5),
             $this->loadPhpCode('@tests/config/init2.php', 5),
             $this->loadPhpCode('@tests/config/closing-tag.php', 5, -2),
-        ], $this->getInaccessibleProperty($loader, 'storage')->bootstrap);
+        ], $this->getInaccessibleProperty($config, 'storage')->bootstrap);
     }
 
     /**
+     * @dataProvider cacheConfigProvider
      * @expectedException \yii\base\InvalidValueException
+     *
+     * @param array $testConfig
      */
-    public function testPlainFileCompileError()
+    public function testPlainFileCompileError(array $testConfig)
     {
-        $loader = $this->createConfig([
+        $config = $this->createConfig(array_merge([
             'files' => [
                 [
                     'class' => PhpBootstrapLoader::className(),
                     'path' => 'plain.php',
                 ],
             ],
-        ]);
-        $loader->cache();
+        ], $testConfig));
+        $config->cache();
     }
 
     /**
+     * @dataProvider cacheConfigProvider
      * @expectedException \yii\base\InvalidValueException
+     *
+     * @param array $testConfig
      */
-    public function testEchoTagCompileError()
+    public function testEchoTagCompileError(array $testConfig)
     {
-        $loader = $this->createConfig([
+        $config = $this->createConfig(array_merge([
             'files' => [
                 [
                     'class' => PhpBootstrapLoader::className(),
                     'path' => 'echo.php',
                 ],
             ],
-        ]);
-        $loader->cache();
+        ], $testConfig));
+        $config->cache();
     }
 
     /**
+     * @dataProvider cacheConfigProvider
      * @expectedException \yii\base\InvalidValueException
+     *
+     * @param array $testConfig
      */
-    public function testMixedPhpHtmlCompileError()
+    public function testMixedPhpHtmlCompileError(array $testConfig)
     {
-        $loader = $this->createConfig([
+        $config = $this->createConfig(array_merge([
             'files' => [
                 [
                     'class' => PhpBootstrapLoader::className(),
                     'path' => 'php-html.php',
                 ],
             ],
-        ]);
-        $loader->cache();
+        ], $testConfig));
+        $config->cache();
     }
 
     protected function loadPhpCode($path, $index, $length = null)

@@ -1,44 +1,16 @@
 <?php
 
-namespace sergeymakinen\tests\config;
+namespace sergeymakinen\yii\config\tests;
 
-use sergeymakinen\config\Config;
-use sergeymakinen\config\Loader;
-use sergeymakinen\config\PhpArrayLoader;
+use sergeymakinen\yii\config\Config;
+use sergeymakinen\yii\config\Loader;
+use sergeymakinen\yii\config\PhpArrayLoader;
 use yii\helpers\ReplaceArrayValue;
 use yii\helpers\VarDumper;
 
 class ConfigTest extends TestCase
 {
-    public function testGetCachePath()
-    {
-        $loader = $this->createConfig();
-        $hash = md5($loader->configDir);
-        $this->assertEquals(
-            realpath(\Yii::getAlias("@tests/runtime/config/console-test-barenv-{$hash}.php")),
-            realpath($this->invokeInaccessibleMethod($loader, 'getCachePath'))
-        );
-
-        $this->assertEquals(
-            realpath(\Yii::getAlias('@tests/runtime/config/foo')),
-            realpath($this->invokeInaccessibleMethod($this->createConfig([
-                'cacheFileName' => function () {
-                    return 'foo';
-                },
-            ]), 'getCachePath'))
-        );
-    }
-
-    /**
-     * @expectedException \yii\base\InvalidConfigException
-     */
-    public function testLoadCachedNoCacheDir()
-    {
-        $this->createConfig([
-            'cacheDir' => null,
-            'enableCaching' => true,
-        ])->load();
-    }
+    use CacheConfigProviderTrait;
 
     /**
      * @expectedException \yii\base\InvalidConfigException
@@ -178,26 +150,27 @@ class ConfigTest extends TestCase
 
     /**
      * @dataProvider shortcutsProvider
+     *
      * @param array $testCase
      */
     public function testShortcuts(array $testCase)
     {
         if (!class_exists('yii\helpers\ReplaceArrayValue')) {
-            $this->markTestSkipped('No ReplaceArrayValue class.');
+            $this->markTestSkipped("No 'yii\\helpers\\ReplaceArrayValue' class.");
             return;
         }
 
-        $loader = $this->createConfig([
+        $config = $this->createConfig([
             'files' => new ReplaceArrayValue($testCase['shortcut']),
         ]);
-        $loaders = $this->invokeInaccessibleMethod($loader, 'resolveLoaders');
+        $loaders = $this->invokeInaccessibleMethod($config, 'resolveLoaders');
         $this->assertCount(1, $loaders);
-        /** @var Loader $loader */
-        $loader = $loaders[0];
-        $this->assertInstanceOf($testCase['actual']['class'], $loader);
+        /** @var Loader $config */
+        $config = $loaders[0];
+        $this->assertInstanceOf($testCase['actual']['class'], $config);
         unset($testCase['actual']['class']);
         foreach ($testCase['actual'] as $name => $value) {
-            self::assertSame($value, $loader->{$name}, VarDumper::export([
+            $this->assertSame($value, $config->{$name}, VarDumper::export([
                 'testCase' => $testCase,
                 'name' => $name,
             ]));
@@ -209,9 +182,14 @@ class ConfigTest extends TestCase
      */
     public function testNoLoader()
     {
-        $loader = $this->createConfig();
-        unset($loader->loaders['php']);
-        $loader->load();
+        $config = $this->createConfig([
+            'files' => [
+                'test' => [
+                    'path' => 'path.txt',
+                ],
+            ],
+        ]);
+        $config->load();
     }
 
     /**
@@ -219,50 +197,49 @@ class ConfigTest extends TestCase
      */
     public function testWrongFilesEntry()
     {
-        $loader = $this->createConfig();
-        $loader->files[] = new \stdClass();
-        $loader->load();
+        $config = $this->createConfig();
+        $config->files[] = new \stdClass();
+        $config->load();
     }
 
-    public function testCache()
+    /**
+     * @dataProvider cacheConfigProvider
+     *
+     * @param array $testConfig
+     */
+    public function testCache(array $testConfig)
     {
-        $expected = '$_ENV[\'init1\'] = true;
+        $finalConfig = array_merge(['enableCache' => true], $testConfig);
+        $config = $this->createConfig($finalConfig);
+        $config->flushCache();
+        $this->assertFalse($config->getIsCached());
+        $this->assertFalse($config->cache->exists($this->getCacheKey($config)));
+        $this->assertTrue($config->cache());
+        $this->assertTrue($config->getIsCached());
+        $this->assertTrue($config->cache->exists($this->getCacheKey($config)));
 
-$_ENV[\'init2\'] = true;
-
-return [
-    \'foo\' => \'bar\',
-    \'local\' => true,
-];';
-        $loader = $this->createConfig();
-        $loader->flushCache();
-        $loader->cache();
-        $path = $this->getCachePath($loader);
-        $this->assertFileExists($path);
-        $this->assertContains($expected, file_get_contents($path));
-
-        $loader = $this->createConfig(['enableCaching' => true]);
-        $this->assertTrue($loader->getIsCached());
+        $config = $this->createConfig($finalConfig);
+        $this->assertTrue($config->getIsCached());
         $this->assertEquals([
             'foo' => 'bar',
             'local' => true,
-        ], $loader->load());
-        $this->assertEmpty($this->getInaccessibleProperty($loader, 'storage')->bootstrap);
+        ], $config->load());
+        $this->assertEmpty($this->getInaccessibleProperty($config, 'storage')->bootstrap);
 
-        $loader->flushCache();
-        $loader = $this->createConfig(['enableCaching' => true]);
-        $this->assertFalse($loader->getIsCached());
+        $config->flushCache();
+        $config = $this->createConfig($finalConfig);
+        $this->assertFalse($config->getIsCached());
         $this->assertEquals([
             'foo' => 'bar',
             'local' => true,
-        ], $loader->load());
-        $this->assertNotEmpty($this->getInaccessibleProperty($loader, 'storage')->bootstrap);
+        ], $config->load());
+        $this->assertNotEmpty($this->getInaccessibleProperty($config, 'storage')->bootstrap);
     }
 
     public function testFromFileOk()
     {
         $expected = $this->getDefaultConfig();
-        $config = Config::fromFile(\Yii::getAlias('@tests/config/config.php'));
+        $config = Config::fromFile('@tests/config/config.php');
         $actual = [];
         foreach (array_keys($expected) as $name) {
             $actual[$name] = $config->{$name};
@@ -273,11 +250,8 @@ return [
     public function testFromFileYamlOverride()
     {
         $expected = $this->getDefaultConfig();
-        $override = [
-            'configDir' => $expected['configDir'],
-            'cacheDir' => $expected['cacheDir'],
-        ];
-        $config = Config::fromFile(\Yii::getAlias('@tests/config/config.yml'), $override);
+        $override = ['configDir' => $expected['configDir']];
+        $config = Config::fromFile('@tests/config/config.yml', $override);
         $actual = [];
         foreach (array_keys($expected) as $name) {
             $actual[$name] = $config->{$name};
@@ -290,12 +264,36 @@ return [
      */
     public function testFromFileNoConfigDir()
     {
-        Config::fromFile(\Yii::getAlias('@tests/config/empty-config.php'));
+        Config::fromFile('@tests/config/empty-config.php');
     }
 
-    protected function getCachePath(Config $loader)
+    public function testCalculateCacheKey()
     {
-        $hash = md5($loader->configDir);
-        return \Yii::getAlias("@tests/runtime/config/console-test-barenv-{$hash}.php");
+        $config = $this->createConfig();
+        $this->assertEquals([
+            $config->tier,
+            $config->env,
+            md5($config->configDir),
+        ], $this->getCacheKey($config));
+    }
+
+    public function testIncludeCacheConfig()
+    {
+        $expected = [
+            'foo' => 'bar',
+            'local' => true,
+        ];
+        $this->assertEquals($expected, $this->createConfig()->load());
+
+        $this->assertEquals($expected, $this->createConfig(['includeCacheConfig' => false])->load());
+
+        $config = $this->createConfig(['includeCacheConfig' => true]);
+        $expected['components']['configCache'] = $config->cache;
+        $this->assertEquals($expected, $config->load());
+    }
+
+    protected function getCacheKey(Config $config)
+    {
+        return $this->invokeInaccessibleMethod($config, 'calculateCacheKey');
     }
 }

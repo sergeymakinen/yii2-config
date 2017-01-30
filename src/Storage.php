@@ -1,34 +1,30 @@
 <?php
 /**
- * Yii 2 config loader.
+ * Yii 2 config loader
  *
  * @see       https://github.com/sergeymakinen/yii2-config
  * @copyright Copyright (c) 2016 Sergey Makinen (https://makinen.ru)
  * @license   https://github.com/sergeymakinen/yii2-config/blob/master/LICENSE The MIT License
  */
 
-namespace sergeymakinen\config;
+namespace sergeymakinen\yii\config;
 
 use yii\base\Object;
 
 /**
  * Internal config object.
  *
- * It's used to store init and config parts in loaders.
+ * It's used to store bootstrap and config parts in loaders.
  */
 class Storage extends Object
 {
     /**
-     * Config bootstrap (strings of a PHP code).
-     *
-     * @var string[]
+     * @var string[] config bootstrap (strings of a PHP code).
      */
     public $bootstrap = [];
 
     /**
-     * Config array.
-     *
-     * @var array
+     * @var array config array.
      */
     public $config = [];
 
@@ -37,6 +33,6 @@ class Storage extends Object
      */
     public function reset()
     {
-        $this->config = $this->bootstrap = [];
+        $this->bootstrap = $this->config = [];
     }
 }
