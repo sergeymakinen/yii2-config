@@ -149,7 +149,7 @@ return [
 
 ## Shortcuts
 
-As you can see in the [example section](#example-config) there are different ways to specify a config file configuration. To be able to write less and more compact, some common options can be written a single string instead of an array.
+As you can see in the [example section](#example-config) there are different ways to specify a config file configuration. To be able to write less, some common options can be written in a single string instead of an array.
 
 `'TIER:ENV@KEY' => 'PATH'` will be resolved as (you can omit any part you don't need):
 
