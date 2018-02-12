@@ -19,10 +19,10 @@
     "minimum-stability": "dev",
     "require": {
         "yiisoft/yii2": "~2.0.13",
-        "sergeymakinen/yii2-php-file-cache": "^2.0"
+        "sergeymakinen/yii2-php-file-cache": "^2.1"
     },
     "require-dev": {
-        "sergeymakinen/yii2-tests": "^2.0",
+        "sergeymakinen/yii2-tests": "^2.2.1",
         "symfony/yaml": "^2.8 || ^3.2 || ^4.0"
     },
     "suggest": {
