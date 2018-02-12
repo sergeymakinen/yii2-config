@@ -15,11 +15,6 @@ trait CacheConfigProviderTrait
 
     public function cacheConfigProvider()
     {
-        if (!class_exists('yii\helpers\ReplaceArrayValue')) {
-            $this->markTestSkipped("No 'yii\\helpers\\ReplaceArrayValue' class.");
-            return null;
-        }
-
         if (static::$arrayCache === null) {
             static::$arrayCache = new ArrayCache();
         }

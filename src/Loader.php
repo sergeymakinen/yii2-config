@@ -9,12 +9,12 @@
 
 namespace sergeymakinen\yii\config;
 
-use yii\base\Object;
+use yii\base\BaseObject;
 
 /**
  * Base config loader.
  */
-abstract class Loader extends Object
+abstract class Loader extends BaseObject
 {
     /**
      * @var string|string[]|null a tier name or an array of tier names to match a tier name specified in [[Config]].

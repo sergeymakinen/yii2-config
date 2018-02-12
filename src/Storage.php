@@ -9,14 +9,14 @@
 
 namespace sergeymakinen\yii\config;
 
-use yii\base\Object;
+use yii\base\BaseObject;
 
 /**
  * Internal config object.
  *
  * It's used to store bootstrap and config parts in loaders.
  */
-class Storage extends Object
+class Storage extends BaseObject
 {
     /**
      * @var string[] config bootstrap (strings of a PHP code).

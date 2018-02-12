@@ -11,8 +11,8 @@ namespace sergeymakinen\yii\config;
 
 use sergeymakinen\yii\phpfilecache\Cache as PhpFileCache;
 use sergeymakinen\yii\phpfilecache\ValueWithBootstrap;
+use yii\base\BaseObject;
 use yii\base\InvalidConfigException;
-use yii\base\Object;
 use yii\caching\Cache;
 use yii\di\Instance;
 use yii\helpers\ArrayHelper;
@@ -22,7 +22,7 @@ use yii\helpers\ArrayHelper;
  *
  * @property bool $isCached whether the config is cached. This property is read-only.
  */
-class Config extends Object
+class Config extends BaseObject
 {
     /**
      * @var string full path to a base directory to look for configs.
